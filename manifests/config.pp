@@ -18,9 +18,9 @@
 class beanstalkd::config inherits beanstalkd {
 
   file {
-    '/etc/defaults/beanstalkd':
+    '/etc/default/beanstalkd':
       ensure  => file,
-      content => template('beanstalkd/etc/defaults/beanstalkd.erb'),
+      content => template('beanstalkd/etc/default/beanstalkd.erb'),
       mode    => '0644',
       owner   => root,
       group   => root,
