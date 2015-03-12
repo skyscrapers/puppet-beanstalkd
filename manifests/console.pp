@@ -15,11 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class beanstalkd::params {
+class beanstalkd::console (
+  $install_dir     = $beanstalkd::params::install_dir
+) inherits beanstalkd::params {
 
-  $listenaddress     = '0.0.0.0'
-  $listenport        = '11300'
-  $persistentstorage = true
-
-  $install_dir = '/var/www/beanstalk_console'
+  composer::project { 'beanstalk_console':
+    project_name => 'ptrofimov/beanstalk_console',
+    target_dir   => $install_dir,
+    stability    => 'dev',
+    keep_vcs     => false,
+    dev          => true,
+  }
 }
