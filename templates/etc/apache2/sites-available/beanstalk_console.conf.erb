@@ -1,0 +1,38 @@
+<VirtualHost *:<%= @webserver_port %>>
+	ServerAdmin noc@ilibris.be
+
+	ServerName <%= @vhostaddress %>
+
+	DocumentRoot <%= @install_dir %>/public
+
+	<Directory "<%= @install_dir %>/public">
+		Options +Includes +IncludesNoExec +FollowSymLinks -MultiViews -Indexes
+		AllowOverride All
+		Order allow,deny
+		Allow from all
+
+		<% if @web_password %>
+		AuthName "beanstalk_console"
+	        AuthType Basic
+          AuthUserFile /etc/apache2/htpasswd
+          Require valid-user
+		<% end %>
+	</Directory>
+
+        # Disable .svn and .git access
+        RedirectMatch 404 /\.svn(/|$)
+        RedirectMatch 404 /\.git(/|$)
+
+        # Disable access files which contain inc and/or sql
+        <FilesMatch "\.(inc|.*sql|.*~)$">
+            Order allow,deny
+            Deny from all
+        </FilesMatch>
+
+        # PHP settings (if override is in order)
+        php_admin_value open_basedir "<%= @install_dir %>/:/usr/share/php/:/usr/share/pear/:/tmp/:/usr/bin/"
+
+        LogLevel warn
+        ErrorLog /var/log/apache2/error-beanstalk.log
+        CustomLog /var/log/apache2/access-beanstalk.log combined
+</VirtualHost>

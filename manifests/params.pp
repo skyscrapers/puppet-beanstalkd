@@ -22,4 +22,7 @@ class beanstalkd::params {
   $persistentstorage = true
 
   $install_dir = '/var/www/beanstalk_console'
+  $webserver_port = '80'
+  $vhostaddress = "beanstalkconsole.${::fqdn}"
+  $web_username = 'beanstalkd'
 }
