@@ -88,7 +88,7 @@ class beanstalkd::console (
           mode     => '0644',
           owner    => root,
           group    => root,
-          require  => Class['apache2'];
+          notify   => Service['apache2'];
 
         '/etc/apache2/sites-enabled/beanstalk_console.conf':
           ensure  => link,
