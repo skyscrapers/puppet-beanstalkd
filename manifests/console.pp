@@ -53,6 +53,7 @@
 class beanstalkd::console (
   $install_dir     = $beanstalkd::params::install_dir,
   $apache_config   = false,
+  $nginx_config    = false,
   $webserver_port  = $beanstalkd::params::webserver_port,
   $vhostaddress    = $beanstalkd::params::vhostaddress,
   $web_username    = $beanstalkd::params::web_username,
@@ -110,6 +111,23 @@ class beanstalkd::console (
           ensure  => link,
           target  => '/etc/apache2/sites-available/beanstalk_console',
           require => File['/etc/apache2/sites-available/beanstalk_console'],
+          notify  => Service['apache2'];
+      }
+    }
+    if ($nginx_config == true) {
+      file {
+        '/etc/nginx/sites-available/beanstalk_console.conf':
+          ensure   => file,
+          content  => template('beanstalkd/etc/nginx/sites-available/beanstalk_console.conf.erb'),
+          mode     => '0644',
+          owner    => root,
+          group    => root,
+          notify   => Service['nginx'];
+
+        '/etc/nginx/sites-enabled/beanstalk_console.conf':
+          ensure  => link,
+          target  => '/etc/nginx/sites-available/beanstalk_console.conf',
+          require => File['/etc/nginx/sites-available/beanstalk_console.conf'],
           notify  => Service['apache2'];
       }
     }
