@@ -3,7 +3,7 @@ server {
   server_name <%= @vhostaddress %>;
   server_name_in_redirect off;
 
-  root <%= @install_dir %>/public %>;
+  root <%= @install_dir %>/public;
 
   index index.html index.php;
 
@@ -15,8 +15,8 @@ server {
     include fastcgi_params;
     #allows to handle 404 in case of a file not found in fpm
     try_files $uri =404;
-    fastcgi_pass 127.0.0.1:<%= @fpm_port %>;
-    fastcgi_index index.php
+    fastcgi_pass 127.0.0.1:9000;
+    fastcgi_index index.php;
   }
 
 }

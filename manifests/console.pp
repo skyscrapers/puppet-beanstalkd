@@ -57,7 +57,9 @@ class beanstalkd::console (
   $webserver_port  = $beanstalkd::params::webserver_port,
   $vhostaddress    = $beanstalkd::params::vhostaddress,
   $web_username    = $beanstalkd::params::web_username,
-  $web_password    = undef
+  $php_owner       = $beanstalkd::params::php_owner,
+  $web_password    = undef,
+
 ) inherits beanstalkd::params {
 
   if !defined(Class['composer']) {
@@ -76,7 +78,7 @@ class beanstalkd::console (
   }
 
   file { "${install_dir}/storage.json":
-      owner   => 'www-data',
+      owner   => $php_owner,
       require => Composer::Project['beanstalk_console']
   }
 
@@ -114,23 +116,6 @@ class beanstalkd::console (
           notify  => Service['apache2'];
       }
     }
-    if ($nginx_config == true) {
-      file {
-        '/etc/nginx/sites-available/beanstalk_console.conf':
-          ensure   => file,
-          content  => template('beanstalkd/etc/nginx/sites-available/beanstalk_console.conf.erb'),
-          mode     => '0644',
-          owner    => root,
-          group    => root,
-          notify   => Service['nginx'];
-
-        '/etc/nginx/sites-enabled/beanstalk_console.conf':
-          ensure  => link,
-          target  => '/etc/nginx/sites-available/beanstalk_console.conf',
-          require => File['/etc/nginx/sites-available/beanstalk_console.conf'],
-          notify  => Service['apache2'];
-      }
-    }
     if ($web_password != undef) {
       file { '/etc/apache2/htpasswd':
         owner => 'www-data',
@@ -141,6 +126,23 @@ class beanstalkd::console (
         file     => '/etc/apache2/htpasswd',
         password => $web_password,
       }
+    }
+  }
+  if ($nginx_config == true) {
+    file {
+      '/etc/nginx/sites-available/beanstalk_console.conf':
+        ensure   => file,
+        content  => template('beanstalkd/etc/nginx/sites-available/beanstalk_console.conf.erb'),
+        mode     => '0644',
+        owner    => root,
+        group    => root,
+        notify   => Service['nginx'];
+
+      '/etc/nginx/sites-enabled/beanstalk_console.conf':
+        ensure  => link,
+        target  => '/etc/nginx/sites-available/beanstalk_console.conf',
+        require => File['/etc/nginx/sites-available/beanstalk_console.conf'],
+        notify  => Service['nginx'];
     }
   }
 }
