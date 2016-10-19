@@ -25,4 +25,5 @@ class beanstalkd::params {
   $webserver_port = '80'
   $vhostaddress = "beanstalkconsole.${::fqdn}"
   $web_username = 'beanstalkd'
+  $php_owner = 'www-data'
 }

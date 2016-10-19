@@ -1,0 +1,22 @@
+server {
+  listen <%= @webserver_port %>;
+  server_name <%= @vhostaddress %>;
+  server_name_in_redirect off;
+
+  root <%= @install_dir %>/public;
+
+  index index.html index.php;
+
+  location / {
+    try_files $uri $uri/ /index.php?$args;
+  }
+
+  location ~ ^(.+\.php)(.*)$ {
+    include fastcgi_params;
+    #allows to handle 404 in case of a file not found in fpm
+    try_files $uri =404;
+    fastcgi_pass 127.0.0.1:9000;
+    fastcgi_index index.php;
+  }
+
+}
